@@ -73,8 +73,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-class DataScreen extends StatelessWidget {
-  const DataScreen({
+class DataScreen extends StatefulWidget {
+  DataScreen({
     Key? key,
     required this.snap,
     required this.temp,
@@ -86,11 +86,17 @@ class DataScreen extends StatelessWidget {
   final double temp;
   final String day;
   final String date;
+  bool isHover = false;
 
   @override
+  State<DataScreen> createState() => _DataScreenState();
+}
+
+class _DataScreenState extends State<DataScreen> {
+  @override
   Widget build(BuildContext context) {
-    final maxtemp = (snap.main.tempMax - 273).floorToDouble();
-   
+    final maxtemp = (widget.snap.main.tempMax - 273).floorToDouble();
+
     return Padding(
       padding: const EdgeInsets.only(left: 18, right: 18, top: 38),
       child: Column(
@@ -98,23 +104,23 @@ class DataScreen extends StatelessWidget {
         children: [
           Row(
             children: [
-            const  Icon(
+              const Icon(
                 CupertinoIcons.slider_horizontal_3,
                 color: Colors.white,
                 size: 26,
               ),
-            const  Spacer(),
-            const  Icon(
+              const Spacer(),
+              const Icon(
                 CupertinoIcons.location_solid,
                 color: Colors.white,
                 size: 24,
               ),
-           const   SizedBox(
+              const SizedBox(
                 width: 12,
               ),
               Text(
-                "${snap.name}, ${snap.sys.country}",
-                style:const TextStyle(
+                "${widget.snap.name}, ${widget.snap.sys.country}",
+                style: const TextStyle(
                     color: Colors.white,
                     fontSize: 20,
                     fontWeight: FontWeight.bold),
@@ -122,22 +128,22 @@ class DataScreen extends StatelessWidget {
             ],
           ),
           Container(
-            margin:const EdgeInsets.only(top: 50),
+            margin: const EdgeInsets.only(top: 50),
             height: 130,
             width: 180,
             child: Stack(
               children: [
                 Center(
                   child: Text(
-                    temp.toString().substring(0, 2),
-                    style:const TextStyle(
+                    widget.temp.toString().substring(0, 2),
+                    style: const TextStyle(
                         color: Colors.amber,
                         fontSize: 100,
                         letterSpacing: 2,
                         fontWeight: FontWeight.w400),
                   ),
                 ),
-               const Align(
+                const Align(
                   alignment: Alignment.topRight,
                   child: Text(
                     "°",
@@ -152,7 +158,7 @@ class DataScreen extends StatelessWidget {
             ),
           ),
           Text(
-            "$day, $date",
+            "${widget.day}, ${widget.date}",
             style: const TextStyle(
                 height: 1.3,
                 color: Colors.grey,
@@ -162,7 +168,7 @@ class DataScreen extends StatelessWidget {
                 wordSpacing: 1.1),
             textAlign: TextAlign.center,
           ),
-       const  SizedBox(
+          const SizedBox(
             height: 20,
           ),
           Text(
@@ -176,209 +182,229 @@ class DataScreen extends StatelessWidget {
                 wordSpacing: 1.1),
             textAlign: TextAlign.center,
           ),
-         const SizedBox(
+          const SizedBox(
             height: 40,
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Container(
-                height: 180,
-                width: 150,
-                padding: const EdgeInsets.only(bottom: 18),
-                decoration: BoxDecoration(
-                  color: Colors.grey.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Image.asset(
-                        "assets/cloud.png",
-                        height: 100,
-                        width: 100,
-                        fit: BoxFit.contain,
-                      ),
-                      Text(
-                        snap.weather[0]["main"],
-                        style: const TextStyle(
-                            height: 1.3,
-                            color: Colors.grey,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1.1,
-                            wordSpacing: 1.1),
-                        textAlign: TextAlign.center,
-                      ),
-                      Text(
-                        snap.weather[0]["description"],
-                        style: const TextStyle(
-                            height: 1.3,
-                            color: Colors.amber,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1.1,
-                            wordSpacing: 1.1),
-                        textAlign: TextAlign.center,
-                      ),
-                    ]),
-              ),
-              Container(
-                height: 180,
-                width: 150,
-                padding:const EdgeInsets.only(bottom: 18),
-                decoration: BoxDecoration(
-                  color: Colors.grey.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Transform.rotate(
-                        angle: 0.8,
-                        child: Image.asset(
-                          "assets/light.png",
-                          height: 100,
-                          width: 100,
-                          fit: BoxFit.contain,
+          AnimatedRotation(
+            turns: widget.isHover ? 1 : 0.5,
+            curve: Curves.easeInOutCirc,
+            duration: const Duration(seconds: 2),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    AnimatedRotation(
+                      turns: widget.isHover ? 1 : 0.5,
+                      curve: Curves.elasticIn,
+                      duration: const Duration(seconds: 2),
+                      child: InkWell(
+                        onTap: (() {
+                          setState(() {
+                            widget.isHover = !widget.isHover;
+                          });
+                        }),
+                        child: Container(
+                          height: 180,
+                          width: 150,
+                          padding: const EdgeInsets.only(bottom: 18),
+                          decoration: BoxDecoration(
+                            color: Colors.grey.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Image.asset(
+                                  "assets/cloud.png",
+                                  height: 100,
+                                  width: 100,
+                                  fit: BoxFit.contain,
+                                ),
+                                Text(
+                                  widget.snap.weather[0]["main"],
+                                  style: const TextStyle(
+                                      height: 1.3,
+                                      color: Colors.grey,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: 1.1,
+                                      wordSpacing: 1.1),
+                                  textAlign: TextAlign.center,
+                                ),
+                                Text(
+                                  widget.snap.weather[0]["description"],
+                                  style: const TextStyle(
+                                      height: 1.3,
+                                      color: Colors.amber,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: 1.1,
+                                      wordSpacing: 1.1),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ]),
                         ),
                       ),
-                  const    Text(
-                        "Pressure",
-                        style:  TextStyle(
-                            height: 1.3,
-                            color: Colors.grey,
-                            fontSize: 16,
-                            fontWeight: FontWeight.normal,
-                            letterSpacing: 1.1,
-                            wordSpacing: 1.1),
-                        textAlign: TextAlign.center,
-                      ),
-                      Text(
-                        snap.main.pressure.toString(),
-                        style: const TextStyle(
-                            height: 1.3,
-                            color: Colors.amber,
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1.1,
-                            wordSpacing: 1.1),
-                        textAlign: TextAlign.center,
-                      ),
-                    ]),
-              ),
-            ],
-          ),
-   const       SizedBox(
-            height: 20,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Container(
-                height: 180,
-                width: 150,
-                padding:const EdgeInsets.only(bottom: 18),
-                decoration: BoxDecoration(
-                  color: Colors.grey.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Image.asset(
-                        "assets/sun.png",
-                        height: 100,
-                        width: 60,
-                        fit: BoxFit.contain,
-                      ),
-                     const Text(
-                        "Humidity",
-                        style:  TextStyle(
-                            height: 1.3,
-                            color: Colors.grey,
-                            fontSize: 16,
-                            fontWeight: FontWeight.normal,
-                            letterSpacing: 1.1,
-                            wordSpacing: 1.1),
-                        textAlign: TextAlign.center,
-                      ),
-                      Text(
-                        snap.main.humidity.toString(),
-                        style: const TextStyle(
-                            height: 1.3,
-                            color: Colors.amber,
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1.1,
-                            wordSpacing: 1.1),
-                        textAlign: TextAlign.center,
-                      ),
-                    ]),
-              ),
-              Container(
-                height: 180,
-                width: 150,
-                padding: const EdgeInsets.only(bottom: 18),
-                decoration: BoxDecoration(
-                  color: Colors.grey.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Image.asset(
-                        "assets/wind.png",
-                        height: 100,
-                        width: 100,
-                        fit: BoxFit.contain,
-                      ),
-                   const   Text(
-                        "Wind Speed (m/s)",
-                        style:TextStyle(
-                          height: 1.3,
-                          color: Colors.grey,
-                          fontSize: 16,
-                          fontWeight: FontWeight.normal,
+                    ),
+                    AnimatedRotation(
+                      turns: widget.isHover ? 1 : 0.5,
+                      curve: Curves.elasticIn,
+                      duration: const Duration(seconds: 2),
+                      child: Container(
+                        height: 180,
+                        width: 150,
+                        padding: const EdgeInsets.only(bottom: 18),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(20),
                         ),
-                        textAlign: TextAlign.center,
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Transform.rotate(
+                                angle: 0.8,
+                                child: Image.asset(
+                                  "assets/light.png",
+                                  height: 100,
+                                  width: 100,
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
+                              const Text(
+                                "Pressure",
+                                style: TextStyle(
+                                    height: 1.3,
+                                    color: Colors.grey,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.normal,
+                                    letterSpacing: 1.1,
+                                    wordSpacing: 1.1),
+                                textAlign: TextAlign.center,
+                              ),
+                              Text(
+                                widget.snap.main.pressure.toString(),
+                                style: const TextStyle(
+                                    height: 1.3,
+                                    color: Colors.amber,
+                                    fontSize: 25,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 1.1,
+                                    wordSpacing: 1.1),
+                                textAlign: TextAlign.center,
+                              ),
+                            ]),
                       ),
-                      Text(
-                        snap.wind.speed.toString(),
-                        style: const TextStyle(
-                            height: 1.3,
-                            color: Colors.amber,
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1.1,
-                            wordSpacing: 1.1),
-                        textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    AnimatedRotation(
+                      turns: widget.isHover ? 1 : 0.5,
+                      curve: Curves.elasticIn,
+                      duration: const Duration(seconds: 2),
+                      child: Container(
+                        height: 180,
+                        width: 150,
+                        padding: const EdgeInsets.only(bottom: 18),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Image.asset(
+                                "assets/sun.png",
+                                height: 100,
+                                width: 60,
+                                fit: BoxFit.contain,
+                              ),
+                              const Text(
+                                "Humidity",
+                                style: TextStyle(
+                                    height: 1.3,
+                                    color: Colors.grey,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.normal,
+                                    letterSpacing: 1.1,
+                                    wordSpacing: 1.1),
+                                textAlign: TextAlign.center,
+                              ),
+                              Text(
+                                widget.snap.main.humidity.toString(),
+                                style: const TextStyle(
+                                    height: 1.3,
+                                    color: Colors.amber,
+                                    fontSize: 25,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 1.1,
+                                    wordSpacing: 1.1),
+                                textAlign: TextAlign.center,
+                              ),
+                            ]),
                       ),
-                    ]),
-              ),
-            ],
+                    ),
+                    AnimatedRotation(
+                      turns: widget.isHover ? 1 : 0.5,
+                      curve: Curves.elasticIn,
+                      duration: const Duration(seconds: 2),
+                      child: Container(
+                        height: 180,
+                        width: 150,
+                        padding: const EdgeInsets.only(bottom: 18),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Image.asset(
+                                "assets/wind.png",
+                                height: 100,
+                                width: 100,
+                                fit: BoxFit.contain,
+                              ),
+                              const Text(
+                                "Wind Speed (m/s)",
+                                style: TextStyle(
+                                  height: 1.3,
+                                  color: Colors.grey,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.normal,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              Text(
+                                widget.snap.wind.speed.toString(),
+                                style: const TextStyle(
+                                    height: 1.3,
+                                    color: Colors.amber,
+                                    fontSize: 25,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 1.1,
+                                    wordSpacing: 1.1),
+                                textAlign: TextAlign.center,
+                              ),
+                            ]),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class Loader extends StatelessWidget {
-  const Loader({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: CircularProgressIndicator(
-        color: Colors.white,
-        strokeWidth: 8,
       ),
     );
   }
